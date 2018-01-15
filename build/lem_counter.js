@@ -79,18 +79,74 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 (function ($) {
-    var LemCounter = function LemCounter(element, options) {
-        _classCallCheck(this, LemCounter);
+    var LemCounter = function () {
+        function LemCounter(element, options) {
+            _classCallCheck(this, LemCounter);
 
-        var self = this;
+            var self = this;
 
-        self.settings = $.extend({}, options);
+            //extend by function call
+            self.settings = $.extend(true, {
+                reverse: false
+            }, options);
 
-        self.$element = $(element);
-    };
+            self.$element = $(element);
+
+            self.counter_obj = { val: 0 };
+
+            self.to_fixed_digits = 0;
+
+            if (self.settings.reverse) {
+                self.counter_obj.val = self.$element.data('lem-counter');
+                self.counter_val_to = 0;
+            } else {
+                self.counter_val_to = self.$element.data('lem-counter');
+                self.counter_val_from = 0;
+            }
+
+            self.init();
+        }
+
+        _createClass(LemCounter, [{
+            key: 'init',
+            value: function init() {
+
+                var self = this;
+
+                //check if number is float
+                if (!Number.isInteger(self.counter_val_to)) {
+
+                    var string_counter_val_to = self.counter_val_to.toString();
+
+                    self.to_fixed_digits = string_counter_val_to.substr(string_counter_val_to.indexOf('.') + 1).length;
+                }
+
+                TweenLite.to(self.counter_obj, 2, {
+                    val: self.counter_val_to,
+                    onUpdate: updateHandler,
+                    ease: Linear.easeNone,
+                    onComplete: function onComplete() {
+                        self.$element.trigger('complete.lc');
+                    }
+                });
+
+                function updateHandler() {
+                    var value = self.counter_obj.val;
+                    var num = value.toFixed(self.to_fixed_digits);
+
+                    // console.log(num);
+                    self.$element.text(num);
+                }
+            }
+        }]);
+
+        return LemCounter;
+    }();
 
     $.fn.lemCounter = function () {
         var $this = this,
