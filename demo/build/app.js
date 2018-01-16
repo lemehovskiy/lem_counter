@@ -20565,7 +20565,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 var self = this;
 
-                self.counter_val_to = Number.parseFloat(self.counter_val_to);
+                self.counter_val_to = Number.parseFloat(self.counter_val_to.replace(/,/g, ''));
 
                 //check if number is float
                 if (!Number.isInteger(self.counter_val_to)) {

@@ -52,8 +52,9 @@
         init() {
 
             let self = this;
+            
+            self.counter_val_to = Number.parseFloat(self.counter_val_to.replace(/,/g, ''));
 
-            self.counter_val_to = Number.parseFloat(self.counter_val_to);
 
             //check if number is float
             if (!Number.isInteger(self.counter_val_to)) {
