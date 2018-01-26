@@ -14,7 +14,10 @@ import {TweenLite} from "gsap";
 $(document).ready(function () {
 
     $('.counter').lemCounter({
-        reverse: false
+        // locale: false,
+        value_to_from_content: true,
+        value_to: 50,
+        value_from: 100
     });
 
     $('.counter').on('complete.lc', function(){

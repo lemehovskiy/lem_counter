@@ -19,32 +19,32 @@
             self.settings = $.extend(true, {
                 value_from: 0,
                 value_to: 100,
-                reverse: false,
-                locale: 'en-US'
+                locale: 'en-US',
+                value_to_from_content: false,
+                animate_duration: 2
             }, options);
 
             self.$element = $(element);
 
-            self.counter_helper = {val: 0}
-
             self.to_fixed_digits = 0;
-
 
             //extend by data options
             self.data_options = self.$element.data('lem-counter');
             self.settings = $.extend(true, self.settings, self.data_options);
 
 
-            if (isNumeric(self.$element.text().replace(/,/g, ''))){
-                self.settings = $.extend(true, self.settings, {
-                    value_to: Number(self.$element.text().replace(/,/g, ''))
-                });
+            //value to from content
+            if (self.settings.value_to_from_content) {
+                //check if number and remove commas
+                if (!isNaN(self.$element.text().replace(/,/g, ''))) {
+                    self.settings = $.extend(true, self.settings, {
+                        value_to: Number(self.$element.text().replace(/,/g, ''))
+                    });
+                }
             }
 
-
-            function isNumeric(num){
-                return !isNaN(num)
-            }
+            //set start value
+            self.counter_helper = {val: self.settings.value_from};
 
             self.init();
 
@@ -54,30 +54,16 @@
 
             let self = this;
 
-            let counter_from = self.settings.value_from;
             let counter_to = self.settings.value_to;
-
-
-            //check if reverse
-            if (self.settings.reverse) {
-                counter_from = self.settings.value_to;
-                counter_to = self.settings.value_from;
-            }
-
-
-            console.log(isFloat(counter_to));
 
             //check if number is float
             if (isFloat(counter_to)) {
                 let string_counter_val_to = counter_to.toString();
 
                 self.to_fixed_digits = string_counter_val_to.substr(string_counter_val_to.indexOf('.') + 1).length;
-
-                console.log(self.to_fixed_digits);
             }
 
-
-            TweenLite.to(self.counter_helper, 2, {
+            TweenLite.to(self.counter_helper, self.settings.animate_duration, {
                 val: counter_to,
                 onUpdate: updateHandler,
                 ease: Linear.easeNone,
@@ -86,7 +72,7 @@
                 }
             });
 
-            function isFloat(n){
+            function isFloat(n) {
                 return Number(n) === n && n % 1 !== 0;
             }
 
@@ -108,9 +94,8 @@
                 }
 
                 if (self.settings.locale) {
-                    num_locale = num_locale.toLocaleString(self.settings.locale);
+                    num_locale = num_locale.toLocaleString(self.settings.locale, {maximumFractionDigits: self.to_fixed_digits});
                 }
-
 
                 self.$element.text(num_locale);
             }
