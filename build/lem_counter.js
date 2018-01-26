@@ -93,8 +93,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             //extend by function call
             self.settings = $.extend(true, {
                 value_from: 0,
-                value_to: 100,
-                locale: 'en-US',
+                value_to: 0,
+                locale: false,
                 value_to_from_content: false,
                 animate_duration: 2
             }, options);
@@ -143,7 +143,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     onUpdate: updateHandler,
                     ease: Linear.easeNone,
                     onComplete: function onComplete() {
-                        self.$element.trigger('complete.lc');
+                        self.$element.trigger('onComplete.lc');
                     }
                 });
 
